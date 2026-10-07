@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Purchasing Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F6F7FA;--ink:#1D2733;--soft:#5F6874;--line:#E4E7EC;--card:#fff;--title:#14304F;--req:#F26A2E;--banner:#FBEFC2;
+ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#12171E;--ink:#E8ECF1;--soft:#A3ADB9;--line:#2A333E;--card:#1B222B;--title:#BcD3F0;--banner:#3A3316}}
+:root[data-theme="dark"]{--paper:#12171E;--ink:#E8ECF1;--soft:#A3ADB9;--line:#2A333E;--card:#1B222B;--title:#BcD3F0;--banner:#3A3316}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);font-family:'Inter',system-ui,sans-serif;color:var(--ink);padding:44px 20px}
+.wrap{max-width:1220px;margin:0 auto}
+h1{font-family:'Sora',system-ui,sans-serif;font-size:clamp(26px,3.6vw,36px);font-weight:700;color:var(--title);margin:0 0 6px}
+p.sub{font-size:15px;color:var(--soft);margin:0 0 26px}
+.scroll-shell{overflow-x:auto;padding-bottom:6px}
+.stage{position:relative;width:1160px;height:470px;margin:0 auto}
+svg.wave{position:absolute;top:0;left:0;width:1160px;height:470px;overflow:visible}
+.node-btn{position:absolute;transform:translate(-50%,-50%);width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--card);z-index:3;cursor:pointer;padding:0;transition:transform .2s}
+.node-btn:hover,.node-btn.active{transform:translate(-50%,-50%) scale(1.18)}
+.node-btn:focus-visible{outline:3px solid var(--title);outline-offset:3px}
+.node-btn i{width:8px;height:8px;border-radius:50%;pointer-events:none}
+.node-btn.optional{border-style:dashed!important}
+.node-num{position:absolute;transform:translateX(-50%);font-family:'Sora',sans-serif;font-size:12px;font-weight:700;color:var(--soft);pointer-events:none;z-index:3}
+.card{position:absolute;width:236px;transform:translateX(-50%);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 16px 14px;box-shadow:0 8px 22px rgba(20,48,79,.14);z-index:2;opacity:0;pointer-events:none;transition:opacity .25s}
+.card.show{opacity:1;pointer-events:auto;z-index:4}
+.card.optional{border:2px dashed #8E97A4}
+.tag{font-size:11px;font-style:italic;color:var(--soft);margin:0 0 4px}
+.card h3{font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:var(--title);margin:0 0 6px;line-height:1.25}
+.card.optional h3{color:var(--soft)}
+.card p.d{font-size:12.8px;line-height:1.45;color:var(--soft);margin:0}
+.who{margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.who h4{font-family:'Sora',sans-serif;font-size:11px;font-style:italic;font-weight:600;color:var(--title);margin:0 0 8px}
+.person{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12.5px;font-weight:500}
+.person.req{color:var(--req);font-weight:600}
+.av{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.av svg{width:14px;height:14px}
+.av.sm{width:18px;height:18px;margin-left:-4px;border:2px solid var(--card)}
+.av.sm:first-child{margin-left:0}
+.av.sm svg{width:10px;height:10px}
+.hint{text-align:center;font-size:13px;color:var(--soft);margin-top:8px}
+.banner{max-width:1160px;margin:30px auto 0;background:var(--banner);padding:12px 20px;text-align:center;font-family:'Sora',sans-serif;font-weight:600;font-size:14px;color:var(--title)}
+footer{max-width:1160px;margin:20px auto 0;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--soft)}
+.leap{font-family:'Sora',sans-serif;font-weight:700;font-size:14px;background:linear-gradient(90deg,#F2D76B,#F2A03B,#E14545,#8B5CF6);-webkit-background-clip:text;background-clip:text;color:transparent}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>The Purchasing Flow</h1>
+  <p class="sub">Click each step to discover who is involved.</p>
+  <div class="scroll-shell"><div class="stage" id="stage">
+    <svg class="wave" viewBox="0 0 1160 470"><defs>
+      <linearGradient id="g" x1="0" y1="0" x2="1160" y2="0" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#E8C640"/><stop offset="20%" stop-color="#5FAE6A"/><stop offset="40%" stop-color="#F2A03B"/>
+        <stop offset="60%" stop-color="#A9B0BC"/><stop offset="80%" stop-color="#D9A3C2"/><stop offset="100%" stop-color="#14304F"/>
+      </linearGradient></defs>
+      <path id="wavePath" fill="none" stroke="url(#g)" stroke-width="2.5"/></svg>
+  </div></div>
+  <p class="hint" id="hint">Click a numbered step above to reveal it.</p>
+  <div class="banner">The Purchase Order &amp; Goods Receipt is matched to the Invoice for payment processing.</div>
+  <footer><span>Pernod Ricard · Confidential</span><span class="leap">leap</span></footer>
+</div>
+
+<script>
+const ico=(c)=>`<svg viewBox="0 0 24 24" fill="${c}"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>`;
+const P={
+  req:{n:"Requester",bg:"#F26A2E",ic:"#fff",cls:"req"},
+  proc:{n:"Procurement",bg:"#14304F",ic:"#fff"},
+  bo:{n:"Budget Owner",bg:"#2A3441",ic:"#fff"},
+  doa:{n:"Delegation of Authority Approvers",multi:["#7DBB6A","#C99A5B","#2F6B3A","#D9D2C5"]},
+  sup:{n:"Supplier",bg:"#DDE0D6",ic:"#4A5560"}
+};
+const nodes=[
+ {x:90,y:320,num:"01",color:"#E8C640",title:"Create a Purchase Requisition",
+  desc:"The Requester creates a Purchase Requisition in Ivalua. This step includes sourcing/benchmark activities if needed.",who:["req","proc"],above:true},
+ {x:322,y:140,num:"02",color:"#5FAE6A",title:"Wait for approval",
+  desc:"The Budget Owner and Approvers review the request. Once approved, it is converted into a Purchase Order.",who:["bo","doa"],above:false},
+ {x:554,y:320,num:"03",color:"#F2A03B",tag:"Automatic",title:"Issue Purchase Order",
+  desc:"The supplier receives the Purchase Order.",who:["sup"],above:true},
+ {x:786,y:140,num:"04",color:"#A9B0BC",tag:"Optional",optional:true,title:"Change / Cancel order",
+  desc:"The Requester can adjust or cancel the order if plans change.",who:["req","sup"],above:false},
+ {x:1018,y:320,num:"05",color:"#D9A3C2",title:"Confirm Goods Receipt / Return",
+  desc:"Confirm delivery or service completion. Return if wrong.",who:["req","sup"],above:true},
+ {x:1130,y:140,num:"06",color:"#14304F",title:"Close order",
+  desc:"The order is closed once complete. After processing, the invoice will be available in Ivalua.",who:["req"],above:false}
+];
+const stage=document.getElementById("stage"),hint=document.getElementById("hint");
+let d=`M ${nodes[0].x} ${nodes[0].y}`;
+for(let i=0;i<nodes.length-1;i++){const a=nodes[i],b=nodes[i+1],m=(a.x+b.x)/2;d+=` C ${m} ${a.y}, ${m} ${b.y}, ${b.x} ${b.y}`}
+document.getElementById("wavePath").setAttribute("d",d);
+
+let active=null;
+nodes.forEach((n,i)=>{
+  const btn=document.createElement("button");
+  btn.className="node-btn"+(n.optional?" optional":"");
+  btn.style.left=n.x+"px";btn.style.top=n.y+"px";btn.style.border=`2.5px solid ${n.color}`;
+  btn.setAttribute("aria-label","Step "+n.num+": "+n.title);
+  btn.innerHTML=`<i style="background:${n.color}"></i>`;
+  stage.appendChild(btn);
+
+  // number sits on the side away from the line (opposite the card side would collide; use the side the wave never crosses)
+  const num=document.createElement("div");
+  num.className="node-num";num.textContent=n.num;num.style.left=n.x+"px";
+  num.style.top=(n.above?n.y+18:n.y-32)+"px";
+  stage.appendChild(num);
+
+  const card=document.createElement("div");
+  card.className="card"+(n.optional?" optional":"");
+  let left=Math.min(Math.max(n.x,118),1160-118);
+  card.style.left=left+"px";
+  if(n.above)card.style.bottom=(470-n.y+34)+"px";else card.style.top=(n.y+34)+"px";
+
+  const people=n.who.map(k=>{
+    const p=P[k];
+    const av=p.multi?p.multi.map(c=>`<span class="av sm" style="background:${c}">${ico("#fff")}</span>`).join(""):`<span class="av" style="background:${p.bg}">${ico(p.ic)}</span>`;
+    return `<div class="person ${p.cls||""}">${av}<span>${p.n}</span></div>`;
+  }).join("");
+  card.innerHTML=`${n.tag?`<p class="tag">${n.tag}</p>`:""}<h3>${n.title}</h3><p class="d">${n.desc}</p>
+    <div class="who"><h4>Who is involved?</h4>${people}</div>`;
+  stage.appendChild(card);
+
+  btn.addEventListener("click",()=>{
+    const was=active===i;
+    document.querySelectorAll(".card").forEach(c=>c.classList.remove("show"));
+    document.querySelectorAll(".node-btn").forEach(b=>b.classList.remove("active"));
+    if(was){active=null;hint.style.display="block"}
+    else{card.classList.add("show");btn.classList.add("active");active=i;hint.style.display="none"}
+  });
+});
+</script>
+</body>
+</html>
